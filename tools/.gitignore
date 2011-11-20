@@ -3,3 +3,4 @@ program
 progrom
 fix-checksum
 liblpclib.a
+lpclib.o

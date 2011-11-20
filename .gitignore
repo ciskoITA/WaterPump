@@ -3,6 +3,7 @@ io.o
 main.o
 task-led.o
 task-pump.o
+task-pump-funct.o
 task-pwm.o
 task-uart.o
 thos

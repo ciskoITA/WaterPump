@@ -1,20 +1,21 @@
 #include "thos.h"
 #include "hw.h"
 #include "pump_conv_table.c"
+#include "pump-function.c"
 #include "led-state.c"
 
-static int pump_status=0; //0 pump is off, 1 pump is on
+//static int pump_status=0; //0 pump is off, 1 pump is on
 
 static int pump_init(void *unused)
 {
 	//initialize hw
-	//setting the IO pin
-	regs[REG_GPIO1DIR]=SET_GPIO1DIR;
-	//at startup PUMP & BUZZER off
-	regs[POWER]=POWER_OFF;
-	regs[BUZZER]=BUZZER_OFF;
+	//setting up the IO pin
+	gpio_Setup();
+	//at startup PUMP & ALARM off
+	pump_Off();
+	alarm_Off();
 	
-	pump_status=0;
+	//pump_status=0;
 	//next version read first level when initialize
 
 	//init led
@@ -41,8 +42,7 @@ static void *pump(void *arg)
 	serial_write(old_value);
 	puts(" - ");
 	//read new value
-	int value=regs[LEVEL];
-	//or value=(regs[LEVEL])&LEVEL_MASK;
+	int value=read_Level();
 
 	//write value to serial	
 	puts("Readed: ");
@@ -79,20 +79,23 @@ static void *pump(void *arg)
 	//values from 0 to 4 are ok, if it is 5 or greater: pump on, if it is 7 buzzer on
 	//when pump is on, turn it off only when level is 2 to avoid damage due to multiple on/off
 	if(value>4) {
-		regs[POWER]=POWER_ON;
-		pump_status=1;
+		pump_On();
+		//pump_status=1;
 		if(value==7) {
-			regs[BUZZER]=BUZZER_ON;
-			if (WARNING==8){
+			alarm_On();
+			if (read_Warning()==1){
+			//1: Warning=TRUE
 			//ok, warning but do nothing for now			
 			}
-		}//end value 7
-		regs[BUZZER]=BUZZER_OFF;
+		}//end if
+		alarm_Off();
 	}//end if
 	//else value<=4; if <=2 pump off
 	else if (value<=2) {
-		regs[POWER]=POWER_OFF;
-		pump_status=0;
+		//regs[POWER]=POWER_OFF;
+		pump_Off();
+		alarm_Off();
+		//pump_status=0;
 	}
 	//else value is 3 or 4, if the pump is on leave it on, else the pump is off and leave it off
 	else {

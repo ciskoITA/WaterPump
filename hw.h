@@ -47,7 +47,7 @@ GPIO1_3 is NOT[NOT(GS)&EO] from 74148 to detect overflow --> I have 8 standard l
 //using the DATAMASK in GPIO1
 #define LEVEL			(0x5001001c / 4) //read values from 0 to 7
 #define LEVEL_MASK		0x7
-//#define WARNING		(0x50010010 / 4
+//#define WARNING		(0x50010010 / 4)
 #define WARNING			(0x50010020 / 4) //read value 8 if WARNING==true
 #define WARNING_MASK		0x8
 //usage levelread=regs[LEVEL]&LEVEL_MASK

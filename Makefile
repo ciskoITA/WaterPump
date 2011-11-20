@@ -1,3 +1,8 @@
+#NOTE:
+#ONLY ONE TASK: THE WATERPUMP TASK (task-pump)!!!!
+
+CROSS_COMPILE=/home/sviluppo/Scaricati/arm-2011.03/bin/arm-none-eabi-
+
 # Cross compiling:
 AS              = $(CROSS_COMPILE)as
 LD              = $(CROSS_COMPILE)ld
@@ -17,7 +22,7 @@ ASFLAGS = -march=armv7-m -mthumb -g -Wall
 LDFLAGS = -T thos.lds
 
 # Task source files and objects
-TSRC = $(wildcard task-*.c)
+TSRC = $(wildcard task-pump-funct.c)
 TOBJ = $(TSRC:.c=.o)
 
 # Our target
