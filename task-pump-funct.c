@@ -84,8 +84,9 @@ static void *pump(void *arg)
 		if(value==7) {
 			alarm_On();
 			if (read_Warning()==1){
-			//1: Warning=TRUE
-			//ok, warning but do nothing for now			
+				puts("WARNING=TRUE!!!");
+				//1: Warning=TRUE
+				//ok, warning but do nothing for now			
 			}
 		}//end if
 		alarm_Off();
