@@ -1,36 +1,31 @@
 #include "thos.h"
 #include "hw.h"
-#include "pump_conv_table.c"
-#include "led-state.c"
+#include "funct-pump.h"
+#include "funct-led.h"
 
-static int pump_status=0; //0 pump is off, 1 pump is on
+static int level_on, level_off;
+static int max=7;
+static int min=0;
 
 static int pump_init(void *unused)
 {
 	//initialize hw
-	//setting the IO pin
-	regs[REG_GPIO1DIR]=SET_GPIO1DIR;
-	//at startup PUMP & BUZZER off
-	regs[POWER]=POWER_OFF;
-	regs[BUZZER]=BUZZER_OFF;
-	
-	pump_status=0;
-	//next version read first level when initialize
+	//setting up the IO pin
+	gpio_setup_pump();
+	//at startup PUMP & ALARM off
+	pump_power(0);
+	alarm_power(0);
+	//default level
+	level_on=4;
+	level_off=2;
 
-	//init led
-	int led_ok=led_init(0);
-	
-	//write init status	
-	puts("led init: ");
-	serial_write(led_ok);
-	puts(" - ");
-	
-	if (led_ok==0) {
-		return 0;
-	}
-	else {
-		return -1;
-	}
+	//gpio_setup_led();
+	//led_status(5, 1);
+
+	puts("setup complete\n");
+
+	//next version read first level when initialize
+	return 0;
 }
 
 static void *pump(void *arg)
@@ -38,18 +33,15 @@ static void *pump(void *arg)
 	//read old value and write to serial	
 	int old_value=(int)arg;
 	puts("Old state: ");
-	serial_write(old_value);
-	puts(" - ");
+	putint(old_value);
+	puts(" / ");
 	//read new value
-	int value=regs[LEVEL];
-	//or value=(regs[LEVEL])&LEVEL_MASK;
+	int value=read_level();
 
 	//write value to serial	
-	puts("Readed: ");
-	serial_write(value);
-	puts(" - ");
-	//turn on the led
-	led((void*)value);
+	puts("Read: ");
+	putint(value);
+	puts(" / ");
 
 	//check value readed
 	int diff=value-old_value;
@@ -64,45 +56,97 @@ static void *pump(void *arg)
 	value=2; old_value=5 --> diff=-3; error!
 	*/
 	if(diff>2 || diff<-2) {
-		puts("Error! Diff readed: ");
-		if (diff<0) {
-			puts("-");
-			diff=0-diff; //transform negative number to positive
-		}
-		serial_write(diff);
-		puts("!!!! - "); // !!!! plus standard spacing
+		puts("Error! Diff read: ");
+		putint(diff);
+		puts("!!!! / "); // !!!! plus standard spacing
 
-		//read it again and if the data is still wrong, use it anyway
-		value=regs[LEVEL];
+		//read it again //and if the data is still wrong, use the worst case
+		int new_read=read_level();
+		puts("New Read: ");
+		putint(new_read);
+		puts(" / ");
+		/*if(value<new_read) {
+			//use the worst case
+			//value=new_read;
+			
+			//print info
+			puts("New Read: ");
+			putint(new_read);
+			puts(" / ");
+		}*/
+		//else value=value
 	}
 	
-	//values from 0 to 4 are ok, if it is 5 or greater: pump on, if it is 7 buzzer on
+	//DEFAAULT: values from 0 to 4 are ok, if it is 5 or greater: pump on, if it is 7 buzzer on
 	//when pump is on, turn it off only when level is 2 to avoid damage due to multiple on/off
-	if(value>4) {
-		regs[POWER]=POWER_ON;
-		pump_status=1;
+	if(value>level_on) {
+		pump_power(1); //pump on
 		if(value==7) {
-			regs[BUZZER]=BUZZER_ON;
-			if (regs[WARNING]==8){
-			//ok, warning but do nothing for now			
+			alarm_power(1); //alarm on
+			if (read_warning()==1){
+				puts("WARNING=TRUE!!!");
+				//1: Warning=TRUE
+				//ok, warning but do nothing for now			
 			}
-		}//end value 7
-		regs[BUZZER]=BUZZER_OFF;
+		}//end if
+		else {
+			alarm_power(0); //alarm off
+		}
 	}//end if
 	//else value<=4; if <=2 pump off
-	else if (value<=2) {
-		regs[POWER]=POWER_OFF;
-		pump_status=0;
+	else if (value<=level_off) {
+		pump_power(0); //pump off
+		alarm_power(0); //alarm off
 	}
 	//else value is 3 or 4, if the pump is on leave it on, else the pump is off and leave it off
 	else {
 	}
 	
+	puts("\n");
 	return (void*) value;
 }//end task
 
+int get_level_on() {
+	return level_on;
+}
+
+int get_level_off() {
+	return level_off;
+}
+
+void set_level_on(int val) {
+	if (val>max) {
+		val=min;
+	}
+	if (val<min) {
+		val=max;
+	}
+	level_on=val;
+}
+
+void set_level_off(int val) {
+	if (val>max) {
+		val=min;
+	}
+	if (val<min) {
+		val=max;
+	}
+	level_off=val;
+}
+
+void check_level() {
+	if (level_off==level_on) {
+		set_level_off(level_off--);
+		check_level(); //is possible to set a value <0, --> use function and a new check
+	}
+	if (level_off>level_on) { //swap
+		int tmp=level_off;
+		level_off=level_on;
+		level_on=tmp;
+	}
+}
+
 static struct thos_task __task t_pump = {
-	.name = "pump", .period = HZ,
+	.name = "pump", .period = HZ/10,
 	.init = pump_init, .job = pump,
-	.release = 10
 };

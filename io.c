@@ -25,3 +25,28 @@ void puts(char *s)
 	while (*s)
 		putc (*s++);
 }
+
+void putinner(int val) {
+	/*1234
+	1234/10=123 remainder 4
+	123/120=12 remainder 3
+	12/10=1 remainder 2
+	1/10=0 remainder 1
+	--> print 1, print 2, print 3, print 4
+	-----> number<10? print the remainder in LIFO mode
+	*/
+	int div=val/10;
+	if (val>9) {
+		putinner(div);		
+	}
+	int remainder=val%10;
+	putc((0x30|remainder));
+}
+
+void putint(int val) {
+	if (val<0) {
+		puts("-");
+		val=0-val;
+	}
+	putinner(val);
+}

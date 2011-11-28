@@ -1,10 +1,10 @@
 boot.o
 io.o
 main.o
-task-led.o
 task-pump.o
-task-pump-funct.o
-task-pwm.o
-task-uart.o
+task-button.o
 thos
 thos.bin
+funct-button.o
+funct-led.o
+funct-pump.o
