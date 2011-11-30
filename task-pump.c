@@ -2,6 +2,7 @@
 #include "hw.h"
 #include "funct-pump.h"
 #include "funct-led.h"
+#include "task-pump.h"
 
 static int level_on, level_off;
 static int max=7;
@@ -45,7 +46,7 @@ static void *pump(void *arg)
 
 	//check value readed
 	int diff=value-old_value;
-	/*
+	#if 0
 	diff>2 example:
 	value=5, old_value=3 --> diff=2; ok
 	value=5, old_value=2 --> diff=3; error!
@@ -54,7 +55,7 @@ static void *pump(void *arg)
 	value=3, old_value=5 --> diff=-2; ok
 	value=3, old_value=4 --> diff=-1; ok
 	value=2; old_value=5 --> diff=-3; error!
-	*/
+	#endif
 	if(diff>2 || diff<-2) {
 		puts("Error! Diff read: ");
 		putint(diff);
@@ -77,7 +78,7 @@ static void *pump(void *arg)
 		//else value=value
 	}
 	
-	//DEFAAULT: values from 0 to 4 are ok, if it is 5 or greater: pump on, if it is 7 buzzer on
+	//DEFAULT: values from 0 to 4 are ok, if it is 5 or greater: pump on, if it is 7 buzzer on
 	//when pump is on, turn it off only when level is 2 to avoid damage due to multiple on/off
 	if(value>level_on) {
 		pump_power(1); //pump on
@@ -106,11 +107,11 @@ static void *pump(void *arg)
 	return (void*) value;
 }//end task
 
-int get_level_on() {
+int get_level_on(void) {
 	return level_on;
 }
 
-int get_level_off() {
+int get_level_off(void) {
 	return level_off;
 }
 
@@ -134,7 +135,7 @@ void set_level_off(int val) {
 	level_off=val;
 }
 
-void check_level() {
+void check_level(void) {
 	if (level_off==level_on) {
 		set_level_off(level_off--);
 		check_level(); //is possible to set a value <0, --> use function and a new check
@@ -147,6 +148,6 @@ void check_level() {
 }
 
 static struct thos_task __task t_pump = {
-	.name = "pump", .period = HZ/10,
+	.name = "pump", .period = HZ/5,
 	.init = pump_init, .job = pump,
 };

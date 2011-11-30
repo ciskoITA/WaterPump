@@ -37,11 +37,11 @@ extern volatile uint32_t regs[];
 #define REG_GPIO1DAT		(0x50013ffc / 4)
 #define REG_GPIO1DIR		(0x50018000 / 4)
 
-/* gpio port 2 --> led 6 and 7 */
+/* gpio port 2 --> led 4 to 7 */
 #define REG_GPIO2DAT		(0x50023ffc / 4)
 #define REG_GPIO2DIR		(0x50028000 / 4)
 
-/* gpio port 3 --> led 0 to 5 */
+/* gpio port 3 --> led 0 to 3 */
 #define REG_GPIO3DAT		(0x50033ffc / 4)
 #define REG_GPIO3DIR		(0x50038000 / 4)
 
@@ -50,15 +50,24 @@ extern volatile uint32_t regs[];
 4 bits used:
 GPIO1_0 to GPIO1_2 the 3 bits used to read the level from 74148,
 GPIO1_3 is NOT[NOT(GS)&EO] from 74148 to detect overflow --> I have 8 standard level (values 0 to 7) plus another for warning function */
-#define LEVEL			(0x5001001c / 4) //read values from 0 to 7
-#define WARNING			(0x50010020 / 4) //read value 8 if WARNING==true
+#define REG_LEVEL		(0x5001001c / 4) //read values from 0 to 7
+#define REG_WARNING		(0x50010020 / 4) //read value 8 if WARNING==true
+#define MASK_LEVEL		7
+#define BIT_WARNING		3
 
 /* gpio port 1 --> water pump output
 2 bits used:
-GPIO1_4 for pump on/off,
-GPIO1_5 for alarm */
-#define POWER			(0x50010040 / 4) //to set pump on/off
-#define ALARM			(0x50010080 / 4) //to set alarm on/off
+GPIO1_10 for pump on/off,
+GPIO1_11 for alarm */
+#define REG_POWER		(0x50011000 / 4) //to set pump on/off
+#define REG_ALARM		(0x50012000 / 4) //to set alarm on/off
+#define BIT_POWER		10
+#define BIT_ALARM		11
 
-// gpio port 2 --> button 1
-#define BUT1			(0x50020800 / 4) //to read button1
+// gpio port 1 --> button 2 : GPIO1_4
+#define REG_BUT2		(0x50010040 / 4) //to read button2
+#define BIT_BUT2		4
+
+// gpio port 2 --> button 1 : GPIO2_9
+#define REG_BUT1		(0x50020800 / 4) //to read button1
+#define BIT_BUT1		9
