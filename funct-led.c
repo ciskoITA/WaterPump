@@ -1,5 +1,4 @@
 #include "funct-led.h"
-#include "funct-general.h"
 #include "hw.h"
 
 static int led_position[8];
@@ -24,13 +23,13 @@ void gpio_setup_led () {
 	#define SET_GPIO3DIR	0x0f
 	regs[REG_GPIO3DIR]=SET_GPIO3DIR;
 	#endif
-	regs[REG_GPIO3DIR]=0xf;
+	//regs[REG_GPIO3DIR]=0xf;
 	#if 0
 	function dir setting: 4,5,6,7 ouptut --> 0..0-1111-0000, hex 0xf0
 	#define SET_GPIO2DIR	0xf0
 	regs[REG_GPIO2DIR]=SET_GPIO2DIR;
 	#endif
-	regs[REG_GPIO2DIR]=0xf0;
+	//regs[REG_GPIO2DIR]=0xf0;
 	//NOTE BUTTON 1 is dir=0 in GPIO2_9--> OK 0xf0;
 	generate_led_pos();
 }
@@ -39,7 +38,7 @@ void gpio_setup_led () {
 void led_status(int num_led, int status) {
 	int val=(led_position[num_led])/4;
 	if (status==1) {
-		regs[val]=0xff;
+		regs[val]=0xffff;
 	}
 	else {
 		regs[val]=0x0;

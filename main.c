@@ -1,5 +1,6 @@
 #include "thos.h"
 #include "hw.h"
+#include "funct-general.h"
 
 int thos_main(void)
 {
@@ -7,6 +8,8 @@ int thos_main(void)
 	unsigned long now;
 
 	puts("The mighty Thos is alive\n");
+	//setup hw
+	setup();
 
 	for (p = __task_begin; p < __task_end; p++) {
 		puts("Task: "); puts(p->name); putc('\n');

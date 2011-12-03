@@ -20,8 +20,8 @@ static int pump_init(void *unused)
 	level_on=4;
 	level_off=2;
 
-	//gpio_setup_led();
-	//led_status(5, 1);
+	gpio_setup_led();
+	led_status(0, 1);
 
 	puts("setup complete\n");
 
@@ -66,7 +66,8 @@ static void *pump(void *arg)
 		puts("New Read: ");
 		putint(new_read);
 		puts(" / ");
-		/*if(value<new_read) {
+		#if 0
+		if(value<new_read) {
 			//use the worst case
 			//value=new_read;
 			
@@ -74,7 +75,8 @@ static void *pump(void *arg)
 			puts("New Read: ");
 			putint(new_read);
 			puts(" / ");
-		}*/
+		}
+		#endif
 		//else value=value
 	}
 	
