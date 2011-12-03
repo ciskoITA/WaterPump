@@ -34,6 +34,9 @@ static void *buttons(void *arg)
 		putint(get_level_off());
 		puts("\n");
 	}
+	if(button3_pressed()==1) { //if pressed
+		set_empty();
+	}
 	if (but_press==1 && timer==0) {
 		check_level(); //check correct value of 2 levels
 		puts("Final level set: On: ");

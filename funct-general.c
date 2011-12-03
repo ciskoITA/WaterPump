@@ -59,23 +59,24 @@ int setup_gpio(void) {
 	set_gpiodir_bit(CFG_POWER_PORT, DIR_POWER, CFG_POWER_BIT); //set power
 	set_gpiodir_bit(CFG_ALARM_PORT, DIR_ALARM, CFG_ALARM_BIT); //set alarm
 	set_gpiodir_bit(CFG_BUT2_PORT, DIR_BUT2, CFG_BUT2_BIT); //set but2
+	set_gpiodir_bit(CFG_BUT3_PORT, DIR_BUT3, CFG_BUT3_BIT); //set but3	
+	//gpio2
+	set_gpiodir_bit(CFG_BUT1_PORT, DIR_BUT1, CFG_BUT1_BIT); //set but1
+	set_gpiodir_multi(CFG_LED47_PORT, DIR_LED47, CFG_LED47_MASK, CFG_LED47_SHIFT); //set led47	
+	//gpio3
+	set_gpiodir_multi(CFG_LED03_PORT, DIR_LED03, CFG_LED03_MASK, CFG_LED03_SHIFT); //set led03
+	
+	//write info about gpio pins direction
 	puts("gpio1: ");
 	putint(array_dir[0]);
 	puts(" - ");
-	
-	//gpio2
-	set_gpiodir_bit(CFG_BUT1_PORT, DIR_BUT1, CFG_BUT1_BIT); //set but1
-	set_gpiodir_multi(CFG_LED47_PORT, DIR_LED47, CFG_LED47_MASK, CFG_LED47_SHIFT); //set led47
 	puts("gpio2: ");
 	putint(array_dir[1]);
-	puts(" - ");	
-	
-	//gpio3
-	set_gpiodir_multi(CFG_LED03_PORT, DIR_LED03, CFG_LED03_MASK, CFG_LED03_SHIFT); //set led03
+	puts(" - ");
 	puts("gpio3: ");
 	putint(array_dir[2]);
 	puts(" - ");
-	
+	//set direction
 	regs[REG_GPIO1DIR]=array_dir[0];
 	regs[REG_GPIO2DIR]=array_dir[1];
 	regs[REG_GPIO3DIR]=array_dir[2];

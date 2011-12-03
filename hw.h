@@ -89,12 +89,19 @@ GPIO1_11 for alarm */
 #define REG_ALARM		(ALARM_GPIO_BASE + (4 << CFG_ALARM_BIT)) / 4 /* port 1, bit 11 --> 0x50012000 to set alarm on/off */
 #define DIR_ALARM		1 //output
 
-// gpio port 1 --> button 2 : GPIO1_4, input
+// gpio port 1 --> button 2, 3 : GPIO1_4, GPIO1_5, input
+// BUT2
 #define CFG_BUT2_PORT		1
 #define CFG_BUT2_BIT		4
 #define BUT2_GPIO_BASE		(REG_GPIOxBASE + (CFG_BUT2_PORT << 16))
 #define REG_BUT2		(BUT2_GPIO_BASE + (4 << CFG_BUT2_BIT)) / 4 /* port 1, bit 4 --> 0x50010040 to read button2 */
 #define DIR_BUT2		0 //input
+// BUT3
+#define CFG_BUT3_PORT		1
+#define CFG_BUT3_BIT		5
+#define BUT3_GPIO_BASE		(REG_GPIOxBASE + (CFG_BUT3_PORT << 16))
+#define REG_BUT3		(BUT3_GPIO_BASE + (4 << CFG_BUT3_BIT)) / 4 /* port 1, bit 5 --> 0x50010080 to read button3 */
+#define DIR_BUT3		0 //input
 
 //============== GPIO 2 =========================
 // gpio port 2 --> button 1 : GPIO2_9, input

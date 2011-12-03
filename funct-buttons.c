@@ -25,3 +25,11 @@ int button2_pressed(void) {
 		return 0;
 	}
 }
+int button3_pressed(void) {
+	if((regs[REG_BUT3])==0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
