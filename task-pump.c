@@ -34,6 +34,7 @@ static void *pump(void *arg)
 	if(empty==1) { //empties the tank until the minimum level set
 		if (read_level()==level_off) {
 			pump_power(0); //pump off
+			empty=0;
 		}
 		return (void*) read_level();
 	}/* use empty method if you would to force the emptying of the tank for maintenance, to prepare the tank to receive a large influx of water or other */

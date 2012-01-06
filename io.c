@@ -26,7 +26,7 @@ void puts(char *s)
 		putc (*s++);
 }
 
-void putinner(int val) {
+void putint_inner(int val) {
 	/*1234
 	1234/10=123 remainder 4
 	123/120=12 remainder 3
@@ -37,7 +37,7 @@ void putinner(int val) {
 	*/
 	int div=val/10;
 	if (val>9) {
-		putinner(div);		
+		putint_inner(div);		
 	}
 	int remainder=val%10;
 	putc((0x30|remainder));
@@ -48,5 +48,5 @@ void putint(int val) {
 		puts("-");
 		val=0-val;
 	}
-	putinner(val);
+	putint_inner(val);
 }
